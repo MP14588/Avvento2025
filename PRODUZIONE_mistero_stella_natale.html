@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Mistero della Stella di Natale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a0000 0%, #330000 50%, #1a0000 100%);
+            color: #f4e4c1;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        h1 {
+            color: #d4af37;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #c49b63;
+            font-style: italic;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-message {
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #f4e4c1;
+        }
+
+        .name-input-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 10px;
+        }
+
+        .name-input-section input {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            font-size: 1.1em;
+            border: 2px solid #d4af37;
+            background: rgba(0, 0, 0, 0.5);
+            color: #f4e4c1;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .episode-list {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .episode-card {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.3) 0%, rgba(70, 0, 0, 0.3) 100%);
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .episode-card:hover:not(.locked) {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+            border-color: #ffd700;
+        }
+
+        .episode-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, rgba(50, 50, 50, 0.3) 0%, rgba(30, 30, 30, 0.3) 100%);
+        }
+
+        .episode-card.completed {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, rgba(0, 100, 0, 0.2) 0%, rgba(0, 70, 0, 0.2) 100%);
+        }
+
+        .episode-card.bonus {
+            border-color: #ff69b4;
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.2) 0%, rgba(200, 50, 150, 0.2) 100%);
+        }
+
+        .episode-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .episode-title {
+            color: #d4af37;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .episode-date {
+            color: #c49b63;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .episode-description {
+            color: #f4e4c1;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2em;
+        }
+
+        .check-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2em;
+            color: #4CAF50;
+        }
+
+        .episode-content {
+            margin-top: 30px;
+        }
+
+        .story-text {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 25px;
+            border-left: 4px solid #d4af37;
+            border-radius: 5px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .question-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(70, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid #d4af37;
+        }
+
+        .question-title {
+            color: #d4af37;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .answer-btn {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #c49b63;
+            color: #f4e4c1;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 1em;
+        }
+
+        .answer-btn:hover {
+            background: rgba(139, 0, 0, 0.5);
+            border-color: #d4af37;
+            transform: translateX(5px);
+        }
+
+        .answer-btn.selected {
+            background: rgba(212, 175, 55, 0.3);
+            border-color: #ffd700;
+        }
+
+        .clue-reveal {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(212, 175, 55, 0.2);
+            border-left: 4px solid #d4af37;
+            border-radius: 5px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .clue-title {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #8B0000 0%, #550000 100%);
+            color: #f4e4c1;
+            border: 2px solid #d4af37;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #a01010 0%, #660000 100%);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37 0%, #a08030 100%);
+            color: #1a0000;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+        }
+
+        .suspects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .suspect-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #c49b63;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suspect-card:hover {
+            border-color: #d4af37;
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .suspect-card.selected {
+            border-color: #ff6b6b;
+            background: rgba(139, 0, 0, 0.3);
+        }
+
+        .suspect-name {
+            color: #d4af37;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .suspect-role {
+            color: #c49b63;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .clues-summary {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #d4af37;
+            margin: 20px 0;
+        }
+
+        .clues-summary h3 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .clue-item {
+            padding: 10px;
+            margin: 8px 0;
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 3px solid #c49b63;
+            border-radius: 3px;
+        }
+
+        .final-reveal {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .final-reveal h2 {
+            color: #d4af37;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .final-reveal.correct {
+            animation: celebration 1s ease;
+        }
+
+        @keyframes celebration {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.05) rotate(-2deg); }
+            75% { transform: scale(1.05) rotate(2deg); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .progress-indicator {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37 0%, #ffd700 100%);
+            transition: width 0.5s ease;
+        }
+
+        .birthday-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .suspects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎄 Il Mistero della Stella di Natale 🎄</h1>
+        <div class="subtitle">Un'avventura investigativa a Padova</div>
+        
+        <div id="app"></div>
+    </div>
+
+    <script>
+        // Date di sblocco degli episodi
+        const UNLOCK_DATES = {
+            1: new Date('2024-12-01'),
+            2: new Date('2024-12-05'),
+            3: new Date('2024-12-10'),
+            'bonus': new Date('2024-12-11'),
+            4: new Date('2024-12-15'),
+            5: new Date('2024-12-20'),
+            6: new Date('2024-12-25')
+        };
+
+        // Struttura degli episodi
+        const EPISODES = {
+            1: {
+                title: "Il Furto della Stella",
+                date: "1 Dicembre",
+                description: "Una preziosa stella di Natale scompare da Via Comino...",
+                story: `È il primo dicembre e la neve cade leggera su Via Comino, una delle strade più affascinanti di Padova. Al civico 42, la famiglia Veronesi si prepara al Natale con un tesoro speciale: una stella di Natale in cristallo del XVIII secolo, ereditata dalla nonna Teresa.
+
+Questa mattina, però, qualcosa è andato storto. La stella è scomparsa dalla teca in cui era custodita nel salotto. La serratura non è stata forzata, e non ci sono segni di effrazione. Chi potrebbe averla presa?
+
+La signora Elena Veronesi è disperata. Solo cinque persone avevano accesso alla casa quella sera: tutti invitati alla cena pre-natalizia del 30 novembre. Ora tocca a te, detective, scoprire la verità prima di Natale.`,
+                questions: [
+                    {
+                        question: "Chi era presente alla cena del 30 novembre?",
+                        options: [
+                            "Solo familiari stretti",
+                            "Familiari e alcuni vicini di Via Comino",
+                            "Tutta la famiglia allargata e amici",
+                            "Solo i sospettati principali"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Alla cena erano presenti sia familiari che vicini di casa. Tutti conoscevano il valore della stella."
+                    },
+                    {
+                        question: "Dove si trova Via Comino a Padova?",
+                        options: [
+                            "In centro storico, vicino a Prato della Valle",
+                            "In una zona residenziale tranquilla",
+                            "Vicino alla stazione dei treni",
+                            "Nel quartiere universitario"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Via Comino si trova in una zona residenziale tranquilla di Padova, dove tutti si conoscono."
+                    },
+                    {
+                        question: "Cosa rende la stella così preziosa?",
+                        options: [
+                            "È fatta d'oro puro",
+                            "È un cristallo del XVIII secolo con storia familiare",
+                            "È decorata con diamanti",
+                            "È stata benedetta dal Papa"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: La stella è un cristallo del XVIII secolo con grande valore affettivo. Non è stata rubata per il valore monetario, ma forse per altre ragioni..."
+                    }
+                ]
+            },
+            2: {
+                title: "I Primi Sospetti",
+                date: "5 Dicembre",
+                description: "Cinque persone, cinque possibili colpevoli...",
+                story: `Dopo giorni di indagini discrete, hai ristretto il campo a cinque sospettati. Ognuno di loro era presente alla cena e aveva un motivo per entrare nel salotto quella sera.
+
+**Mattias** - Il cugino artista, 32 anni, vive in un atelier vicino al Cinema Rex. Ha sempre ammirato la stella e ne ha fatto numerosi schizzi. Recentemente ha avuto problemi economici.
+
+**Sarah** - La vicina di casa, 45 anni, proprietaria del Vivaio delle Piante in Via Comino. Colleziona oggetti d'antiquariato e ha fatto diverse offerte per comprare la stella.
+
+**Giuly** - L'amica d'infanzia di Elena, 38 anni, gestisce il Supermarket all'angolo della via. È stata vista litigare con Elena pochi giorni prima del furto.
+
+**Albert** - Il giardiniere tuttofare, 55 anni, si occupa del Giardino dei Giacinti, lo splendido parco pubblico di Via Comino. Conosceva tutti i movimenti della famiglia.
+
+**Lilly** - La nipote ribelle, 24 anni, studia storia dell'arte. Ha sempre sostenuto che la stella dovrebbe essere in un museo, non in una casa privata.`,
+                questions: [
+                    {
+                        question: "Chi tra i sospettati lavora al Cinema Rex?",
+                        options: [
+                            "Mattias ha un atelier vicino al cinema",
+                            "Sarah organizza eventi culturali al cinema",
+                            "Nessuno lavora direttamente al cinema",
+                            "Albert fa il custode part-time"
+                        ],
+                        correctIndex: 0,
+                        clue: "Indizio scoperto: Mattias, l'artista, ha il suo studio vicino al Cinema Rex. Ha dichiarato di essere stato lì a dipingere la sera del furto."
+                    },
+                    {
+                        question: "Chi gestisce il Vivaio delle Piante?",
+                        options: [
+                            "Albert, insieme al suo lavoro di giardiniere",
+                            "Sarah, la vicina collezionista",
+                            "La famiglia Veronesi",
+                            "Giuly, che lo ha ereditato"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Sarah gestisce il Vivaio delle Piante. Ha sempre mostrato interesse per oggetti rari e preziosi della zona."
+                    },
+                    {
+                        question: "Chi è stato visto litigare con Elena?",
+                        options: [
+                            "Mattias per questioni di eredità",
+                            "Lilly per la questione museo",
+                            "Giuly, l'amica d'infanzia",
+                            "Albert per questioni di pagamento"
+                        ],
+                        correctIndex: 2,
+                        clue: "Indizio scoperto: Giuly e Elena hanno avuto un diverbio acceso. Testimoni al Supermarket dicono che riguardava 'vecchi segreti di famiglia'."
+                    }
+                ]
+            },
+            3: {
+                title: "Indizi al Giardino dei Giacinti",
+                date: "10 Dicembre",
+                description: "Una scoperta inaspettata nel parco...",
+                story: `La tua indagine ti porta al Giardino dei Giacinti, il bellissimo parco pubblico di Via Comino. Albert, il giardiniere, lavora qui da vent'anni e conosce ogni angolo del quartiere.
+
+Mentre passi tra i vialetti coperti di neve, noti qualcosa di strano: vicino alla fontana centrale, parzialmente nascosta sotto una panchina, c'è una scatola di velluto blu. Il cuore ti batte forte mentre la apri... ma è vuota. È però identica a quella che conteneva la stella!
+
+Albert ti vede e si avvicina nervosamente. "Non so niente di quella scatola," dice, "ma posso dirle una cosa: la sera del 30 novembre, ho visto qualcuno correre attraverso il giardino verso il Vivaio delle Piante. Era buio, non ho visto chi fosse, ma indossava un cappotto rosso."
+
+Al Supermarket, Giuly conferma di possedere un cappotto rosso, ma sostiene di averlo prestato a Lilly quella sera. Lilly nega tutto. Chi mente?`,
+                questions: [
+                    {
+                        question: "Dove è stata trovata la scatola vuota?",
+                        options: [
+                            "Nel Vivaio delle Piante",
+                            "Al Giardino dei Giacinti, sotto una panchina",
+                            "Dietro al Cinema Rex",
+                            "Nel retro del Supermarket"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: La scatola è stata trovata al Giardino dei Giacinti. Perché il ladro l'avrebbe lasciata proprio lì?"
+                    },
+                    {
+                        question: "Cosa ha visto Albert quella sera?",
+                        options: [
+                            "Due persone litigare vicino alla fontana",
+                            "Una figura con cappotto rosso correre verso il vivaio",
+                            "Una macchina sospetta parcheggiata",
+                            "Qualcuno arrampicarsi sul muro della villa"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Albert ha visto qualcuno in cappotto rosso dirigersi verso il Vivaio. Ma chi era davvero?"
+                    },
+                    {
+                        question: "Chi sostiene di aver prestato il cappotto rosso?",
+                        options: [
+                            "Sarah a Mattias",
+                            "Giuly a Lilly",
+                            "Elena a Giuly",
+                            "Lilly a Giuly"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Giuly dice di aver prestato il cappotto a Lilly, ma Lilly lo nega fermamente. Una delle due mente."
+                    }
+                ]
+            },
+            'bonus': {
+                title: "🎂 Buon Compleanno, Detective! 🎂",
+                date: "11 Dicembre",
+                description: "Un regalo speciale per il tuo compleanno...",
+                isBonus: true,
+                story: `Oggi è un giorno speciale per te, detective! Nel mezzo di questa complessa indagine, vogliamo fermarci un momento per celebrare il tuo compleanno. 🎉
+
+Ma quale detective sarebbe senza un indizio in più? Come regalo, abbiamo una sorpresa per te...
+
+La signora Elena Veronesi ha ritrovato il diario segreto della nonna Teresa, quella che possedeva originariamente la Stella di Natale. In una pagina datata 1952, hai trovato questa annotazione:
+
+*"La stella nasconde un segreto che solo la famiglia conosce. Nel cristallo è inciso un numero: 1742. È l'anno in cui la stella fu creata, ma anche il numero della cassetta di sicurezza dove ho depositato il testamento vero. Solo chi possiede la stella può accedere alla cassetta."*
+
+Questo cambia tutto! Forse il movente non era il valore affettivo della stella, ma l'accesso a qualcosa di molto più importante: un testamento che potrebbe ridistribuire l'intera eredità della famiglia Veronesi.
+
+Chi tra i sospettati aveva davvero bisogno di quel testamento? E soprattutto... chi lo sapeva?`,
+                questions: [
+                    {
+                        question: "Cosa nasconde veramente la Stella di Natale?",
+                        options: [
+                            "Una mappa del tesoro di famiglia",
+                            "Il numero di una cassetta di sicurezza con il testamento",
+                            "Le coordinate di un luogo segreto",
+                            "Un codice per aprire la villa"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio CRUCIALE scoperto: La stella permette l'accesso a una cassetta di sicurezza con il testamento della nonna Teresa. Chi lo sapeva?"
+                    },
+                    {
+                        question: "Chi avrebbe maggior interesse in un testamento modificato?",
+                        options: [
+                            "Sarah, che non è famiglia",
+                            "Albert, che è solo un dipendente",
+                            "I membri della famiglia: Mattias, Giuly e Lilly",
+                            "Tutti allo stesso modo"
+                        ],
+                        correctIndex: 2,
+                        clue: "Indizio scoperto: Il testamento riguarderebbe principalmente i membri della famiglia Veronesi. Mattias, Giuly e Lilly hanno legami familiari diretti."
+                    },
+                    {
+                        question: "Quando è stata creata la stella secondo il diario?",
+                        options: [
+                            "1742",
+                            "1952",
+                            "1800",
+                            "1652"
+                        ],
+                        correctIndex: 0,
+                        clue: "Indizio scoperto: 1742 è l'anno di creazione della stella E il numero della cassetta. Un dettaglio che pochi conoscevano..."
+                    }
+                ]
+            },
+            4: {
+                title: "La Verità al Cinema Rex",
+                date: "15 Dicembre",
+                description: "Un testimone rompe il silenzio...",
+                story: `Il Cinema Rex, storico edificio di Via Comino, sta proiettando un vecchio film noir. Tu hai deciso di venire qui perché sai che Mattias ha il suo atelier proprio accanto, e vuoi interrogarlo ancora.
+
+Ma mentre aspetti che finisca la proiezione, un'anziana signora ti si avvicina. È la signora Francisca, bigliettaia del cinema da quarant'anni. "Ho sentito delle sue indagini," dice sottovoce. "La sera del 30 novembre, ho visto qualcosa di strano."
+
+Ti racconta che verso le 23:00, mentre chiudeva il cinema, ha visto Lilly parlare animatamente con Sarah fuori dal Vivaio delle Piante. "Sembravano complici," dice Francisca. "Lilly le ha passato qualcosa, avvolto in un panno. Non ho visto bene cosa fosse, ma Sarah l'ha nascosto subito nella sua borsa."
+
+Il giorno dopo, Sarah ha improvvisamente chiuso il vivaio per "inventario straordinario". Nessuno ha potuto entrare per tre giorni. Quando riapre, interrogata, Sarah nega tutto: "Non ho visto Lilly quella sera. Francisca è anziana, avrà confuso le persone."
+
+Ma tu ora sai che c'è una connessione. E dopo aver scoperto la questione del testamento per il tuo compleanno, tutto inizia ad avere senso...`,
+                questions: [
+                    {
+                        question: "Chi ha visto Francisca quella sera?",
+                        options: [
+                            "Mattias e Albert parlare al parco",
+                            "Lilly e Sarah fuori dal Vivaio",
+                            "Giuly correre verso casa",
+                            "Elena e Albert litigare"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Francisca, testimone affidabile, ha visto Lilly passare qualcosa a Sarah. Stavano complottando insieme?"
+                    },
+                    {
+                        question: "Cosa ha fatto Sarah dopo quella sera?",
+                        options: [
+                            "Ha lasciato Padova per qualche giorno",
+                            "Ha chiuso il vivaio per 'inventario'",
+                            "Ha denunciato un furto alla polizia",
+                            "Ha litigato pubblicamente con Lilly"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Sarah ha chiuso il Vivaio per tre giorni. Stava nascondendo qualcosa? O qualcuno?"
+                    },
+                    {
+                        question: "Chi è Francisca?",
+                        options: [
+                            "Una vicina di casa ficcanaso",
+                            "La bigliettaia del Cinema Rex da 40 anni",
+                            "Un'investigatrice privata",
+                            "Una parente lontana dei Veronesi"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Francisca lavora al Cinema Rex da decenni e conosce tutti in Via Comino. La sua testimonianza è affidabile."
+                    }
+                ]
+            },
+            5: {
+                title: "L'Ultimo Indizio",
+                date: "20 Dicembre",
+                description: "Tutti i pezzi del puzzle si uniscono...",
+                story: `Mancano solo cinque giorni a Natale. Hai tutti gli elementi, ma manca ancora la prova definitiva. Decidi di tornare al Supermarket di Giuly per un ultimo controllo.
+
+Mentre fai finta di fare la spesa, noti qualcosa di strano: nella piccola edicola all'interno del supermarket, tra vecchie riviste, c'è un libro antico sulla storia di Padova. Lo sfogli distrattamente e trovi un ritaglio di giornale del 1952: l'annuncio funebre della nonna Teresa.
+
+Ma è quello che c'è scritto a mano sul rettaglio a farti gelare il sangue: "Cassetta 1742 - Testamento vero - Solo con la stella". È la calligrafia di Giuly. Sotto, una data recente: 28 novembre, due giorni prima del furto.
+
+Improvvisamente tutto è chiaro. Giuly sapeva del testamento. Ma come? E soprattutto, era davvero lei la ladra, o c'era qualcun altro dietro?
+
+Ricordi tutti gli indizi:
+- Il cappotto rosso verso il Vivaio
+- Lilly che passa qualcosa a Sarah
+- La scatola vuota al Giardino dei Giacinti  
+- L'atelier di Mattias vicino al cinema
+- Albert che vede tutto dal suo giardino
+- La chiusura improvvisa del Vivaio
+
+Chi ha davvero rubato la Stella di Natale? E soprattutto... dov'è ora?`,
+                questions: [
+                    {
+                        question: "Cosa ha scoperto al Supermarket?",
+                        options: [
+                            "Una mappa della cassaforte di famiglia",
+                            "Un ritaglio con note di Giuly sul testamento",
+                            "La stella nascosta in magazzino",
+                            "Lettere minatorie contro Elena"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio CRUCIALE: Giuly conosceva l'esistenza del testamento e della cassetta 1742 già dal 28 novembre!"
+                    },
+                    {
+                        question: "Quale connessione c'è tra tutti i luoghi dell'indagine?",
+                        options: [
+                            "Sono tutti di proprietà della famiglia Veronesi",
+                            "Sono tutti gestiti dai sospettati in Via Comino",
+                            "Sono tutti luoghi dove è stata vista la stella",
+                            "Sono tutti sorvegliati da Albert"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio scoperto: Cinema Rex (Mattias), Vivaio (Sarah), Supermarket (Giuly), Giardino (Albert). Tutti i sospettati controllano un luogo in Via Comino."
+                    },
+                    {
+                        question: "Chi potrebbe aver agito come complice?",
+                        options: [
+                            "Nessuno, il ladro ha agito da solo",
+                            "C'era sicuramente più di una persona coinvolta",
+                            "Tutti erano d'accordo tranne uno",
+                            "Elena stessa ha orchestrato tutto"
+                        ],
+                        correctIndex: 1,
+                        clue: "Indizio FINALE: Troppi dettagli suggeriscono una collaborazione. La vera domanda è: chi ha rubato fisicamente la stella e chi l'ha aiutato?"
+                    }
+                ]
+            },
+            6: {
+                title: "La Rivelazione Finale",
+                date: "25 Dicembre",
+                description: "È tempo di accusare il colpevole...",
+                isFinal: true
+            }
+        };
+
+        const SUSPECTS = [
+            {
+                name: "Mattias",
+                role: "Il Cugino Artista",
+                description: "32 anni, vive vicino al Cinema Rex. Ha problemi economici ma grande talento artistico.",
+                motive: "Problemi finanziari, accesso al testamento come cugino, e grave astinenza da zucchero che lo ha reso disperato."
+            },
+            {
+                name: "Sarah",
+                role: "La Collezionista",
+                description: "45 anni, proprietaria del Vivaio delle Piante. Ama gli oggetti antichi.",
+                motive: "Ossessione per oggetti rari e possibile accordo per nascondere la stella."
+            },
+            {
+                name: "Giuly",
+                role: "L'Amica con Segreti",
+                description: "38 anni, gestisce il Supermarket. Conosceva il segreto del testamento.",
+                motive: "Legame familiare nascosto con i Veronesi e conoscenza del testamento."
+            },
+            {
+                name: "Albert",
+                role: "Il Giardiniere Osservatore",
+                description: "55 anni, custode del Giardino dei Giacinti. Vede tutto ma dice poco.",
+                motive: "Accesso a tutti i luoghi e possibile ricatto o favore verso qualcuno."
+            },
+            {
+                name: "Lilly",
+                role: "La Nipote Idealista",
+                description: "24 anni, studentessa di storia dell'arte. Crede nella conservazione pubblica.",
+                motive: "Idealismo o interesse nell'eredità? Vista passare qualcosa a Sarah."
+            }
+        ];
+
+        // Game State
+        let gameState = {
+            playerName: 'Giorgia',
+            currentScreen: 'welcome',
+            currentEpisode: null,
+            completedEpisodes: [],
+            currentQuestionIndex: 0,
+            selectedAnswers: {},
+            collectedClues: [],
+            finalAccusation: null,
+            correctCulprit: 'Mattias'
+        };
+
+        // Carica stato salvato
+        function loadGameState() {
+            const saved = localStorage.getItem('christmasMysteryGame');
+            if (saved) {
+                gameState = { ...gameState, ...JSON.parse(saved) };
+            }
+        }
+
+        // Salva stato
+        function saveGameState() {
+            localStorage.setItem('christmasMysteryGame', JSON.stringify(gameState));
+        }
+
+        // ⚙️ MODALITÀ PRODUZIONE - Sblocco basato su date reali
+        function isEpisodeUnlocked(episodeKey) {
+            const now = new Date();
+            const unlockDate = UNLOCK_DATES[episodeKey];
+            return now >= unlockDate;
+        }
+
+        // Verifica se l'episodio precedente è completato
+        function isPreviousEpisodeCompleted(episodeKey) {
+            if (episodeKey === 1) return true;
+            if (episodeKey === 'bonus') {
+                return gameState.completedEpisodes.includes(3);
+            }
+            if (episodeKey === 4) {
+                return gameState.completedEpisodes.includes('bonus') || gameState.completedEpisodes.includes(3);
+            }
+            return gameState.completedEpisodes.includes(episodeKey - 1);
+        }
+
+        // Schermata di benvenuto
+        function renderWelcomeScreen() {
+            return `
+                <div class="welcome-screen">
+                    <div class="welcome-message">
+                        <p style="font-size: 1.5em; margin-bottom: 20px;">🕵️‍♀️</p>
+                        <p><strong>Benvenuta, Giorgia, in questa avventura investigativa!</strong></p>
+                        <p style="margin-top: 20px;">Un mistero oscuro aleggia su Via Comino a Padova.<br>
+                        Una preziosa stella di Natale è scomparsa, e solo tu puoi scoprire la verità.</p>
+                        <p style="margin-top: 20px;">Sei pronta a risolvere questo caso prima di Natale?</p>
+                    </div>
+                    
+                    <div class="name-input-section">
+                        <p style="margin-bottom: 15px; color: #d4af37;">
+                            <em>Se desideri condurre le indagini in incognito,<br>inserisci il tuo nickname qui sotto:</em>
+                        </p>
+                        <input 
+                            type="text" 
+                            id="playerNameInput" 
+                            placeholder="${gameState.playerName}"
+                            value="${gameState.playerName}"
+                        />
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="startGame()">
+                        🔍 Inizia l'Avventura
+                    </button>
+                </div>
+            `;
+        }
+
+        // Lista episodi
+        function renderEpisodeList() {
+            let html = `
+                <div class="progress-indicator">
+                    <p style="color: #d4af37; margin-bottom: 10px;">
+                        <strong>Benvenuta, ${gameState.playerName}!</strong>
+                    </p>
+                    <p style="color: #c49b63;">
+                        Episodi completati: ${gameState.completedEpisodes.length}/6
+                    </p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${(gameState.completedEpisodes.length / 6) * 100}%"></div>
+                    </div>
+                </div>
+                <div class="episode-list">
+            `;
+
+            // Trova il prossimo episodio da sbloccare
+            let nextUnlockDate = null;
+            let nextUnlockEpisode = null;
+            
+            for (let key in EPISODES) {
+                const episode = EPISODES[key];
+                const isCompleted = gameState.completedEpisodes.includes(key);
+                const isUnlocked = isEpisodeUnlocked(key) && isPreviousEpisodeCompleted(key);
+                const isBonus = episode.isBonus;
+                
+                // Mostra solo gli episodi sbloccati
+                if (isUnlocked && !episode.isFinal) {
+                    let cardClass = 'episode-card';
+                    if (isCompleted) cardClass += ' completed';
+                    if (isBonus) cardClass += ' bonus';
+                    
+                    const checkIcon = isCompleted ? '<div class="check-icon">✓</div>' : '';
+                    const bonusBadge = isBonus ? '<span class="birthday-badge">🎂 COMPLEANNO</span>' : '';
+
+                    html += `
+                        <div class="${cardClass}" onclick="openEpisode('${key}')">
+                            ${checkIcon}
+                            <div class="episode-header">
+                                <div class="episode-title">
+                                    ${episode.title} ${bonusBadge}
+                                </div>
+                                <div class="episode-date">${episode.date}</div>
+                            </div>
+                            <div class="episode-description">
+                                ${episode.description}
+                            </div>
+                        </div>
+                    `;
+                } else if (!isUnlocked && !episode.isFinal) {
+                    // Trova il prossimo episodio da sbloccare
+                    const unlockDate = UNLOCK_DATES[key];
+                    if (!nextUnlockDate || unlockDate < nextUnlockDate) {
+                        nextUnlockDate = unlockDate;
+                        nextUnlockEpisode = episode;
+                    }
+                }
+            }
+
+            // Mostra messaggio "Prossimo indizio" se c'è un episodio bloccato
+            if (nextUnlockDate && nextUnlockEpisode) {
+                html += `
+                    <div class="episode-card" style="background: rgba(212, 175, 55, 0.15); border: 2px dashed #d4af37; cursor: default;">
+                        <div style="text-align: center; padding: 10px;">
+                            <p style="color: #d4af37; font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
+                                🔮 Prossimo Indizio
+                            </p>
+                            <p style="color: #c49b63; font-size: 1.1em;">
+                                ${nextUnlockEpisode.date}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Episodio finale
+            const allCompleted = gameState.completedEpisodes.length === 5;
+            const finalUnlocked = isEpisodeUnlocked(6) && allCompleted;
+            
+            if (finalUnlocked) {
+                html += `
+                    <div class="episode-card" onclick="openFinalEpisode()">
+                        <div class="episode-header">
+                            <div class="episode-title">
+                                ${EPISODES[6].title}
+                            </div>
+                            <div class="episode-date">${EPISODES[6].date}</div>
+                        </div>
+                        <div class="episode-description">
+                            ${EPISODES[6].description}
+                        </div>
+                    </div>
+                `;
+            } else if (allCompleted && !finalUnlocked) {
+                // Mostra "Prossimo indizio" per il finale
+                html += `
+                    <div class="episode-card" style="background: rgba(212, 175, 55, 0.15); border: 2px dashed #d4af37; cursor: default;">
+                        <div style="text-align: center; padding: 10px;">
+                            <p style="color: #d4af37; font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">
+                                🔮 Prossimo Indizio
+                            </p>
+                            <p style="color: #c49b63; font-size: 1.1em;">
+                                25 Dicembre
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        // Render episodio
+        function renderEpisode() {
+            const episode = EPISODES[gameState.currentEpisode];
+            const question = episode.questions[gameState.currentQuestionIndex];
+            
+            let html = `
+                <div class="episode-content">
+                    <h2 style="color: #d4af37; margin-bottom: 20px;">
+                        ${episode.title}
+                        ${episode.isBonus ? '<span class="birthday-badge">🎂 SPECIALE COMPLEANNO</span>' : ''}
+                    </h2>
+                    <div class="story-text">${episode.story.replace(/\n/g, '<br><br>')}</div>
+            `;
+
+            html += `
+                <div class="question-section">
+                    <div class="question-title">
+                        Domanda ${gameState.currentQuestionIndex + 1} di ${episode.questions.length}
+                    </div>
+                    <p style="color: #f4e4c1; margin: 15px 0; font-size: 1.1em;">
+                        ${question.question}
+                    </p>
+                    <div class="answer-options">
+            `;
+
+            question.options.forEach((option, index) => {
+                const selectedIndex = gameState.selectedAnswers[gameState.currentEpisode]?.[gameState.currentQuestionIndex];
+                const isSelected = selectedIndex === index;
+                html += `
+                    <button class="answer-btn ${isSelected ? 'selected' : ''}" 
+                            onclick="selectAnswer(${index})">
+                        ${option}
+                    </button>
+                `;
+            });
+
+            html += '</div>';
+
+            if (gameState.selectedAnswers[gameState.currentEpisode]?.[gameState.currentQuestionIndex] !== undefined) {
+                html += `
+                    <div class="clue-reveal">
+                        <div class="clue-title">🔍 ${question.correctIndex === gameState.selectedAnswers[gameState.currentEpisode][gameState.currentQuestionIndex] ? 'Risposta Corretta!' : 'Interessante...'}</div>
+                        <p style="color: #f4e4c1;">${question.clue}</p>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+
+            html += '<div class="navigation">';
+            html += '<button class="btn" onclick="backToEpisodes()">← Torna agli Episodi</button>';
+            
+            if (gameState.selectedAnswers[gameState.currentEpisode]?.[gameState.currentQuestionIndex] !== undefined) {
+                if (gameState.currentQuestionIndex < episode.questions.length - 1) {
+                    html += '<button class="btn btn-primary" onclick="nextQuestion()">Prossima Domanda →</button>';
+                } else {
+                    html += '<button class="btn btn-primary" onclick="completeEpisode()">Completa Episodio ✓</button>';
+                }
+            }
+            
+            html += '</div>';
+            html += '</div>';
+
+            return html;
+        }
+
+        // Episodio finale
+        function renderFinalEpisode() {
+            let html = `
+                <div class="episode-content">
+                    <h2 style="color: #d4af37; text-align: center; margin-bottom: 30px;">
+                        🎄 La Rivelazione Finale 🎄
+                    </h2>
+                    <div class="story-text">
+                        <p>È la mattina di Natale. La neve cade dolcemente su Via Comino mentre tu, ${gameState.playerName}, ti prepari a rivelare la verità alla famiglia Veronesi.</p>
+                        <p style="margin-top: 15px;">Hai raccolto tutti gli indizi durante queste settimane intense di indagini. Ora devi solo fare l'accusa finale.</p>
+                        <p style="margin-top: 15px;"><strong>Chi ha rubato la Stella di Natale?</strong></p>
+                    </div>
+
+                    <div class="clues-summary">
+                        <h3>📋 Riepilogo Indizi Raccolti:</h3>
+                        ${gameState.collectedClues.map(clue => `
+                            <div class="clue-item">${clue}</div>
+                        `).join('')}
+                    </div>
+
+                    <h3 style="color: #d4af37; text-align: center; margin: 30px 0;">
+                        Scegli il colpevole:
+                    </h3>
+
+                    <div class="suspects-grid">
+                        ${SUSPECTS.map(suspect => `
+                            <div class="suspect-card ${gameState.finalAccusation === suspect.name ? 'selected' : ''}"
+                                 onclick="selectSuspect('${suspect.name}')">
+                                <div class="suspect-name">${suspect.name}</div>
+                                <div class="suspect-role">${suspect.role}</div>
+                                <p style="font-size: 0.9em; color: #f4e4c1; margin-top: 10px;">
+                                    ${suspect.description}
+                                </p>
+                                <p style="font-size: 0.85em; color: #d4af37; margin-top: 10px; font-style: italic;">
+                                    Movente: ${suspect.motive}
+                                </p>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="navigation" style="justify-content: center; margin-top: 40px;">
+                        ${gameState.finalAccusation ? `
+                            <button class="btn btn-primary" onclick="revealTruth()" style="font-size: 1.2em;">
+                                🎭 Rivela la Verità
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // Rivelazione finale
+        function renderTruthReveal() {
+            const isCorrect = gameState.finalAccusation === gameState.correctCulprit;
+            
+            let html = `
+                <div class="final-reveal ${isCorrect ? 'correct' : ''}">
+                    <h2>${isCorrect ? '🎉 HAI RISOLTO IL MISTERO! 🎉' : '🤔 Non proprio...'}</h2>
+                    
+                    <div class="story-text" style="margin: 30px 0; font-size: 1.1em;">
+                        ${isCorrect ? `
+                            <p><strong>Complimenti, ${gameState.playerName}!</strong> Hai identificato correttamente il colpevole.</p>
+                            <p style="margin-top: 20px;">La verità è questa:</p>
+                        ` : `
+                            <p><strong>${gameState.playerName}</strong>, la tua intuizione ti ha portato vicino, ma non è ${gameState.finalAccusation} il colpevole principale.</p>
+                            <p style="margin-top: 20px;">Ecco cosa è realmente accaduto:</p>
+                        `}
+                        
+                        <p style="margin-top: 25px; text-align: left; line-height: 2;">
+                            <strong style="color: #d4af37;">LA VERITÀ:</strong><br><br>
+                            
+                            <strong style="color: #ffd700;">Mattias</strong>, il cugino artista, è il vero colpevole del furto. Dietro la sua apparente dedizione all'arte si nascondeva una disperazione crescente: non solo i debiti lo stavano soffocando, ma aveva anche sviluppato una grave dipendenza da zucchero che lo tormentava giorno e notte.<br><br>
+                            
+                            Quando <strong>Giuly</strong> gli rivelò accidentalmente l'esistenza del testamento segreto nella cassetta 1742, Mattias vide l'unica via d'uscita. Il testamento originale della nonna Teresa, che lui aveva scoperto tramite vecchi documenti nel suo atelier vicino al <strong>Cinema Rex</strong>, gli garantiva una parte sostanziosa dell'eredità.<br><br>
+                            
+                            La sera del 30 novembre, dopo la cena, Mattias rubò la stella. In preda all'astinenza da zucchero e alla disperazione finanziaria, agì d'impulso. Per depistare le indagini, chiese a <strong>Lilly</strong> di prestargli il cappotto rosso di Giuly, mentendole sul motivo. Attraversò il <strong>Giardino dei Giacinti</strong> dove <strong>Albert</strong> lo vide, credendo fosse una donna per via del cappotto.<br><br>
+                            
+                            Nascose temporaneamente la stella nel suo atelier, poi convinse <strong>Sarah</strong>, promettendole di poterla studiare, a tenerla nel <strong>Vivaio delle Piante</strong> durante i tre giorni di "inventario". Sarah, ignara del furto, accettò pensando fosse un prestito temporaneo dalla famiglia.<br><br>
+                            
+                            Il piano era semplice: accedere alla cassetta 1742, modificare i documenti, e restituire la stella fingendo di averla "ritrovata". Ma non aveva previsto la clausola finale del testamento: la nonna Teresa aveva lasciato istruzioni che in caso di furto della stella, l'intera eredità sarebbe andata in beneficenza.<br><br>
+                            
+                            Mattias ha perso tutto: l'eredità, la reputazione, e soprattutto la fiducia della famiglia. E tu, ${gameState.playerName}, hai risolto il mistero di Via Comino!
+                        </p>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px; padding: 30px; background: rgba(212, 175, 55, 0.2); border-radius: 10px;">
+                        <p style="font-size: 1.3em; color: #d4af37; margin-bottom: 20px;">
+                            🎄 <strong>BUON NATALE, ${gameState.playerName}!</strong> 🎄
+                        </p>
+                        <p style="color: #f4e4c1; line-height: 1.8;">
+                            Grazie per aver partecipato a questa avventura investigativa.<br>
+                            Che questo Natale sia pieno di misteri (ma solo quelli piacevoli)!
+                        </p>
+                    </div>
+
+                    <div class="navigation" style="justify-content: center; margin-top: 30px;">
+                        <button class="btn" onclick="resetGame()">🔄 Ricomincia l'Avventura</button>
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // Render principale
+        function render() {
+            const app = document.getElementById('app');
+            
+            switch(gameState.currentScreen) {
+                case 'welcome':
+                    app.innerHTML = renderWelcomeScreen();
+                    break;
+                case 'episodes':
+                    app.innerHTML = renderEpisodeList();
+                    break;
+                case 'episode':
+                    app.innerHTML = renderEpisode();
+                    break;
+                case 'final':
+                    app.innerHTML = renderFinalEpisode();
+                    break;
+                case 'reveal':
+                    app.innerHTML = renderTruthReveal();
+                    break;
+            }
+        }
+
+        // Funzioni di interazione
+        function startGame() {
+            const nameInput = document.getElementById('playerNameInput');
+            if (nameInput && nameInput.value.trim()) {
+                gameState.playerName = nameInput.value.trim();
+            }
+            gameState.currentScreen = 'episodes';
+            saveGameState();
+            render();
+        }
+
+        function openEpisode(episodeKey) {
+            gameState.currentEpisode = episodeKey;
+            gameState.currentQuestionIndex = 0;
+            gameState.currentScreen = 'episode';
+            
+            if (!gameState.selectedAnswers[episodeKey]) {
+                gameState.selectedAnswers[episodeKey] = {};
+            }
+            
+            saveGameState();
+            render();
+        }
+
+        function openFinalEpisode() {
+            gameState.currentScreen = 'final';
+            saveGameState();
+            render();
+        }
+
+        function selectAnswer(answerIndex) {
+            if (!gameState.selectedAnswers[gameState.currentEpisode]) {
+                gameState.selectedAnswers[gameState.currentEpisode] = {};
+            }
+            
+            gameState.selectedAnswers[gameState.currentEpisode][gameState.currentQuestionIndex] = answerIndex;
+            
+            const episode = EPISODES[gameState.currentEpisode];
+            const question = episode.questions[gameState.currentQuestionIndex];
+            if (!gameState.collectedClues.includes(question.clue)) {
+                gameState.collectedClues.push(question.clue);
+            }
+            
+            saveGameState();
+            render();
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestionIndex++;
+            saveGameState();
+            render();
+        }
+
+        function completeEpisode() {
+            if (!gameState.completedEpisodes.includes(gameState.currentEpisode)) {
+                gameState.completedEpisodes.push(gameState.currentEpisode);
+            }
+            gameState.currentScreen = 'episodes';
+            saveGameState();
+            render();
+        }
+
+        function backToEpisodes() {
+            gameState.currentScreen = 'episodes';
+            saveGameState();
+            render();
+        }
+
+        function selectSuspect(suspectName) {
+            gameState.finalAccusation = suspectName;
+            saveGameState();
+            render();
+        }
+
+        function revealTruth() {
+            gameState.currentScreen = 'reveal';
+            saveGameState();
+            render();
+        }
+
+        function resetGame() {
+            if (confirm('Sei sicura di voler ricominciare? Tutti i progressi saranno persi.')) {
+                localStorage.removeItem('christmasMysteryGame');
+                location.reload();
+            }
+        }
+
+        // Inizializzazione
+        loadGameState();
+        render();
+    </script>
+</body>
+</html>
