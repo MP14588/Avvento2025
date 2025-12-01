@@ -423,13 +423,13 @@
     <script>
         // Date di sblocco degli episodi (ore locale italiana, non UTC)
         const UNLOCK_DATES = {
-            1: new Date(2025, 12, 1),      // 1 Dicembre 2025 (mese 11 = dicembre)
-            2: new Date(2025, 12, 5),      // 5 Dicembre 2025
-            3: new Date(2025, 12, 10),     // 10 Dicembre 2025
-            'bonus': new Date(2025, 12, 11), // 11 Dicembre 2025
-            4: new Date(2025, 12, 15),     // 15 Dicembre 2025
-            5: new Date(2025, 12, 20),     // 20 Dicembre 2025
-            6: new Date(2025, 12, 25)      // 25 Dicembre 2025
+            1: new Date(2025, 11, 1),      // 1 Dicembre 2025 (mese 11 = dicembre)
+            2: new Date(2025, 11, 5),      // 5 Dicembre 2025
+            3: new Date(2025, 11, 10),     // 10 Dicembre 2025
+            'bonus': new Date(2025, 11, 11), // 11 Dicembre 2025
+            4: new Date(2025, 11, 15),     // 15 Dicembre 2025
+            5: new Date(2025, 11, 20),     // 20 Dicembre 2025
+            6: new Date(2025, 11, 25)      // 25 Dicembre 2025
         };
 
         // Struttura degli episodi
@@ -811,14 +811,22 @@ Chi ha davvero rubato la Stella di Natale? E soprattutto... dov'è ora?`,
 
         // Verifica se l'episodio precedente è completato
         function isPreviousEpisodeCompleted(episodeKey) {
-            if (episodeKey === 1) return true;
+            // Converti la chiave in numero se possibile per confronti corretti
+            const keyNum = parseInt(episodeKey);
+            
+            if (episodeKey == 1 || keyNum === 1) return true;
             if (episodeKey === 'bonus') {
-                return gameState.completedEpisodes.includes(3);
+                return gameState.completedEpisodes.includes(3) || gameState.completedEpisodes.includes('3');
             }
-            if (episodeKey === 4) {
-                return gameState.completedEpisodes.includes('bonus') || gameState.completedEpisodes.includes(3);
+            if (episodeKey == 4 || keyNum === 4) {
+                return gameState.completedEpisodes.includes('bonus') || 
+                       gameState.completedEpisodes.includes(3) || 
+                       gameState.completedEpisodes.includes('3');
             }
-            return gameState.completedEpisodes.includes(episodeKey - 1);
+            // Per gli altri episodi, verifica il precedente
+            const prevKey = keyNum - 1;
+            return gameState.completedEpisodes.includes(prevKey) || 
+                   gameState.completedEpisodes.includes(prevKey.toString());
         }
 
         // Schermata di benvenuto
